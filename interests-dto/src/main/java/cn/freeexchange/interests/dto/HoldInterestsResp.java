@@ -21,4 +21,21 @@ public class HoldInterestsResp {
 	//权益类型
 	private String interestsType;
 	
+	
+	
+	public static HoldInterestsResp makeHoldInterestsResp(String mediaType,String generationId
+			,Long interestsAmount,String interestsType) {
+		return new HoldInterestsResp(mediaType, generationId, interestsAmount, interestsType);
+	}
+
+	protected HoldInterestsResp() {
+		
+	}
+
+	protected HoldInterestsResp(String mediaType, String generationId, Long interestsAmount, String interestsType) {
+		this.mediaType = mediaType;
+		this.generationId = generationId;
+		this.interestsAmount = interestsAmount;
+		this.interestsType = interestsType;
+	}
 }

@@ -6,13 +6,13 @@ import cn.freeexchange.interests.dto.HoldInterestsResp;
 
 public interface InterestsService {
 	
+	//领取权益
+	public HoldInterestsResp holdInterests(Long partner,Long openId,String scence,Map<String, Object> extParams);
 	
-	public HoldInterestsResp holdInterests(Long partner,Long openId,String scence);
+	//核销券
+	public HoldInterestsResp writeoffInterests(Long partner,Long openId,String couponId);
 	
-	
-	public HoldInterestsResp writeoffInterests(Long partner,Long openId,String mediaType,String couponId);
-	
-	
+	//领取并核销
 	public HoldInterestsResp holdAndWriteoffInterests(Long partner,Long openId,String scence,Map<String,Object> extParams);
 	
 }

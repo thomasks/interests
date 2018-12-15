@@ -17,6 +17,11 @@
   		<groupId>cn.freeexchange</groupId>
   		<artifactId>interests-dto</artifactId>
   	</dependency>
+  	
+  	<dependency>
+  		<groupId>cn.freeexchange</groupId>
+  		<artifactId>interests-api</artifactId>
+  	</dependency>
 	  	
   </dependencies>
   
