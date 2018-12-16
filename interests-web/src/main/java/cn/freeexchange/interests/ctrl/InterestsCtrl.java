@@ -21,9 +21,13 @@ import cn.freeexchange.common.base.identity.IdentityDto;
 import cn.freeexchange.common.base.req.RequestDTO;
 import cn.freeexchange.common.base.service.TokenService;
 import cn.freeexchange.interests.dto.CardDto;
+import cn.freeexchange.interests.dto.CouponDto;
 import cn.freeexchange.interests.dto.HoldInterestsResp;
+import cn.freeexchange.interests.req.HoldCouponReq;
 import cn.freeexchange.interests.req.IssueCardReq;
+import cn.freeexchange.interests.req.WriteoffCouponReq;
 import cn.freeexchange.interests.service.CardService;
+import cn.freeexchange.interests.service.CouponService;
 import cn.freeexchange.interests.service.InterestsService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +44,9 @@ public class InterestsCtrl {
 	
 	@Autowired
 	private InterestsService interestsService;
+	
+	@Autowired
+	private CouponService couponService;
 	
 	@RequestMapping(value = "/issueCard", method = {RequestMethod.POST,RequestMethod.GET})
 	public ApiResponse<HoldInterestsResp> issueCard(HttpServletRequest request,@RequestBody IssueCardReq issueCardReq) {
@@ -87,10 +94,76 @@ public class InterestsCtrl {
 			log.error("@@issueCard meet error.",t);
 			return ApiResponse.failure(ApiResponse.CODE_ERROR,ApiResponse.MSG_ERROR);
 		}
-		
 	}
 	
 	
+	@RequestMapping(value = "/holdCoupon", method = {RequestMethod.POST,RequestMethod.GET})
+	public ApiResponse<HoldInterestsResp> holdCoupon(HttpServletRequest request,@RequestBody HoldCouponReq holdCouponReq) {
+		log.info("@@account overview arrived...");
+		String partner = request.getHeader(RequestDTO.HEADER_PARTNER_ID);
+		if(StringUtils.isBlank(partner)) {
+			return ApiResponse.failure("合作商户号不能为空");
+		}
+		try {
+			holdCouponReq.verify();
+			Long openId = holdCouponReq.getOpenId();
+			String scence = holdCouponReq.getScence();
+			String scenario = holdCouponReq.getScenario();
+			BigDecimal amount = holdCouponReq.getAmount();
+			Map<String,Object> extParams = new HashMap<>();
+			extParams.put("scenario", scenario);
+			extParams.put("amount", amount);
+			HoldInterestsResp holdInterests = interestsService.holdInterests(Long.parseLong(partner), openId, scence, extParams);
+			return ApiResponse.success(holdInterests);
+		} catch (BusinessException e) {
+			log.error("@@issueCard meet error.",e);
+			return ApiResponse.failure(e.getBusinessCode(), e.getMessage());
+		} catch (Throwable t) {
+			log.error("@@issueCard meet error.",t);
+			return ApiResponse.failure(ApiResponse.CODE_ERROR,ApiResponse.MSG_ERROR);
+		}
+		
+	}
+	
+	@RequestMapping(value = "/writeoffCoupon", method = {RequestMethod.POST,RequestMethod.GET})
+	public ApiResponse<HoldInterestsResp> issueCard(HttpServletRequest request,@RequestBody WriteoffCouponReq writeoffCouponReq) {
+		log.info("@@account overview arrived...");
+		String partner = request.getHeader(RequestDTO.HEADER_PARTNER_ID);
+		if(StringUtils.isBlank(partner)) {
+			return ApiResponse.failure("合作商户号不能为空");
+		}
+		try {
+			writeoffCouponReq.verify();
+			Long couponId = writeoffCouponReq.getCouponId();
+			interestsService.writeoffInterests(couponId);
+			return ApiResponse.success();
+		} catch (BusinessException e) {
+			log.error("@@issueCard meet error.",e);
+			return ApiResponse.failure(e.getBusinessCode(), e.getMessage());
+		} catch (Throwable t) {
+			log.error("@@issueCard meet error.",t);
+			return ApiResponse.failure(ApiResponse.CODE_ERROR,ApiResponse.MSG_ERROR);
+		}
+	}
+	
+	@RequestMapping(value = "/couponList", method = {RequestMethod.POST,RequestMethod.GET})
+	public ApiResponse<CardDto> couponList(@RequestHeader(value="token",defaultValue="") String token) {
+		log.info("@@couponList arrived...");
+		if(StringUtils.isBlank(token)) {
+			return ApiResponse.failure("用户未登入");
+		}
+		try {
+			IdentityDto identityDto = tokenService.getTokenIdentity(token);
+			Map<String, List<CouponDto>> coupons = couponService.queryCoupons(identityDto.getPartner(), identityDto.getOpenId());
+			return ApiResponse.success(coupons);
+		} catch (BusinessException e) {
+			log.error("@@issueCard meet error.",e);
+			return ApiResponse.failure(e.getBusinessCode(), e.getMessage());
+		} catch (Throwable t) {
+			log.error("@@issueCard meet error.",t);
+			return ApiResponse.failure(ApiResponse.CODE_ERROR,ApiResponse.MSG_ERROR);
+		}
+	}
 	
 
 }

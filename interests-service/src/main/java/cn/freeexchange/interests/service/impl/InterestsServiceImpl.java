@@ -7,8 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.freeexchange.interests.api.InterestsMetaType;
+import cn.freeexchange.interests.domain.Card;
+import cn.freeexchange.interests.domain.Coupon;
 import cn.freeexchange.interests.domain.Interests;
 import cn.freeexchange.interests.domain.InterestsMeta;
+import cn.freeexchange.interests.domain.rpt.CardRpt;
+import cn.freeexchange.interests.domain.rpt.CouponRpt;
 import cn.freeexchange.interests.domain.rpt.InterestsRpt;
 import cn.freeexchange.interests.dto.HoldInterestsResp;
 import cn.freeexchange.interests.service.GenerationService;
@@ -22,6 +27,12 @@ public class InterestsServiceImpl implements InterestsService {
 
 	@Autowired
 	private GenerationService generationService;
+	
+	@Autowired
+	private CouponRpt couponRpt;
+	
+	@Autowired
+	private CardRpt cardRpt;
 	
 	@Override
 	@Transactional
@@ -38,8 +49,17 @@ public class InterestsServiceImpl implements InterestsService {
 	}
 
 	@Override
-	public HoldInterestsResp writeoffInterests(Long partner, Long openId, String couponId) {
-		return null;
+	@Transactional
+	public void writeoffInterests(Long couponId) {
+		Coupon coupon = couponRpt.getOne(couponId);
+		coupon.writeoff();
+		String refType = coupon.getRefType();
+		Long refValue = coupon.getRefValue();
+		if(refType.equalsIgnoreCase(InterestsMetaType.CARD.getCode())) {
+			Card  card = cardRpt.getOne(refValue);
+			card.syncUsageValue(coupon.getAmount());
+			cardRpt.save(card);
+		}
 	}
 
 	@Override

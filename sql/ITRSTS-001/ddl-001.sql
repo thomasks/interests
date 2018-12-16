@@ -89,3 +89,34 @@ CREATE TABLE `tb_card` (
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 ALTER TABLE `tb_card` ADD INDEX `IDX_CARD_PAR_OPENID` (`partner`,`open_id`) ;
+
+
+
+DROP TABLE IF EXISTS `tb_coupon`;
+CREATE TABLE `tb_coupon` (
+  `id` bigint(64) NOT NULL AUTO_INCREMENT,
+  `partner` bigint(64) NOT NULL,
+  `open_id` bigint(64) NOT NULL,
+  `ref_type` varchar(128) NOT NULL,
+  `ref_value` bigint(64),
+  `coupon_no` varchar(128) NOT NULL,
+  `coupon_name` varchar(255) NOT NULL,
+  `issuer_id` bigint(64),
+  `issuer_name` varchar(255) NOT NULL,
+  `coupon_type` varchar(128) NOT NULL,
+  `create_time` datetime NOT NULL,
+  `enable_date` datetime NOT NULL,
+  `expire_date` datetime NOT NULL,
+  `logic_delete` bit(1) DEFAULT 0,
+  `update_time` datetime NOT NULL,
+  `description` text,
+  `original_amt` bigint(64) not null,
+  `amount` bigint(64) not null,
+  `max_amt` bigint(64),
+  `min_amt` bigint(64),
+  `discount` varchar(255),
+  `deduct_amt` bigint(64),
+  `status` varchar(128),
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+ALTER TABLE `tb_coupon` ADD INDEX `IDX_CARD_PAR_OPENID` (`partner`,`open_id`) ;

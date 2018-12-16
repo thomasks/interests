@@ -13,6 +13,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
+import cn.freeexchange.common.base.exception.BusinessException;
 import cn.freeexchange.interests.api.InterestsMetaType;
 import cn.freeexchange.interests.dto.CardDto;
 import lombok.Getter;
@@ -78,8 +81,18 @@ public class Card implements InterestsMeta {
     	
     }
     
+    
+    public void syncUsageValue(Long amount) {
+    	Long usageValue  = (this.usageValue == null) ? 0L : this.usageValue;
+    	Long latestsValue = usageValue + amount;
+    	if(latestsValue > this.interestsValue) {
+    		throw new BusinessException("coupon05");
+    	}
+    	this.usageValue = latestsValue;
+    }
+    
     protected Card(Long openId,PartnerCardLevel partnerCardLevel,Long interestsValue,String issuerName) {
-    	this.cardNo = "";
+    	this.cardNo = RandomStringUtils.random(12, false, true);
     	this.partner= partnerCardLevel.getPartner();
     	this.openId =openId;
     	this.interestsValue = interestsValue;

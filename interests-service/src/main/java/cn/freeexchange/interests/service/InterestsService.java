@@ -10,7 +10,7 @@ public interface InterestsService {
 	public HoldInterestsResp holdInterests(Long partner,Long openId,String scence,Map<String, Object> extParams);
 	
 	//核销券
-	public HoldInterestsResp writeoffInterests(Long partner,Long openId,String couponId);
+	public void writeoffInterests(Long couponId);
 	
 	//领取并核销
 	public HoldInterestsResp holdAndWriteoffInterests(Long partner,Long openId,String scence,Map<String,Object> extParams);
