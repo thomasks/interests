@@ -33,7 +33,7 @@ public class CouponDto {
 	
 	public static CouponDto makeCouponDto(String issuerName,Long amount,String status,Date enableDate,Date expiryDate,String couponNo) {
 		String validateBeginDate = DateFormatUtils.format(enableDate, parttern);
-		String validateEndDate = DateFormatUtils.format(enableDate, parttern);
+		String validateEndDate = DateFormatUtils.format(expiryDate, parttern);
 		String amt = AmountUtils.toAmount(amount);
 		return new CouponDto(validateBeginDate, validateEndDate, issuerName, amt, status,couponNo);
 	}
