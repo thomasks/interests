@@ -21,6 +21,7 @@ import cn.freeexchange.common.base.identity.IdentityDto;
 import cn.freeexchange.common.base.req.RequestDTO;
 import cn.freeexchange.common.base.service.TokenService;
 import cn.freeexchange.interests.dto.CardDto;
+import cn.freeexchange.interests.dto.CardOverviewDto;
 import cn.freeexchange.interests.dto.CouponDto;
 import cn.freeexchange.interests.dto.HoldInterestsResp;
 import cn.freeexchange.interests.req.HoldCouponReq;
@@ -74,6 +75,27 @@ public class InterestsCtrl {
 			return ApiResponse.failure(ApiResponse.CODE_ERROR,ApiResponse.MSG_ERROR);
 		}
 		
+	}
+	
+	@RequestMapping(value = "/cardOverview", method = {RequestMethod.POST,RequestMethod.GET})
+	public ApiResponse<CardOverviewDto> cardOverview(@RequestHeader(value="token",defaultValue="") String token) {
+		log.info("@@account overview arrived...");
+		if(StringUtils.isBlank(token)) {
+			return ApiResponse.failure("用户未登入");
+		}
+		try {
+			IdentityDto identityDto = tokenService.getTokenIdentity(token);
+			Long partner = identityDto.getPartner();
+			Long openId = identityDto.getOpenId();
+			CardOverviewDto cardOverview = cardService.cardOverview(partner, openId);
+			return ApiResponse.success(cardOverview);
+		} catch (BusinessException e) {
+			log.error("@@issueCard meet error.",e);
+			return ApiResponse.failure(e.getBusinessCode(), e.getMessage());
+		} catch (Throwable t) {
+			log.error("@@issueCard meet error.",t);
+			return ApiResponse.failure(ApiResponse.CODE_ERROR,ApiResponse.MSG_ERROR);
+		}
 	}
 	
 	

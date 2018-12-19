@@ -13,4 +13,6 @@ public interface CouponRpt extends JpaRepository<Coupon, Long>, JpaSpecification
 	
 	@Query("from Coupon where partner=?1 and openId=?2")
 	List<Coupon> queryCoupons(Long partner,Long openId);
+	
+	Long countByPartnerAndOpenId(Long partner,Long openId);
 }

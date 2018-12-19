@@ -13,4 +13,6 @@ public interface CardRpt extends JpaRepository<Card, Long>, JpaSpecificationExec
 	
 	@Query("from Card where partner=?1 and openId=?2")
 	List<Card> queryCards(Long partner,Long openId);
+	
+	Long countByPartnerAndOpenId(Long partner,Long openId);
 }
